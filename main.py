@@ -64,4 +64,4 @@ def main(page: Page):
     )
     
     page.update()
-app(target=main)
+app(target=main,assets_dir="assets")
