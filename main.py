@@ -46,7 +46,7 @@ def main(page: Page):
             alert2.open = True
             page.update()
             
-    photo = Image(src="assets/images/profile.jpg",width=200)
+    photo = Image(src="https://cdn-icons-png.flaticon.com/512/8847/8847419.png",width=200)
     text = Text("Login System ",color='red',size=25)
     en1 = TextField(label="Email",hint_text="Enter Your Email",color='white',width=300,icon=icons.EMAIL)
     en2 = TextField(label="Passwd",hint_text="Enter Your Password",color='white',width=300,icon=icons.PASSWORD, password=True,can_reveal_password=True)
