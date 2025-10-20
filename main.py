@@ -1,67 +1,74 @@
-from flet import *
+from flet import (
+    Page, TextField, ElevatedButton, Image, Column,
+    FilePicker, FilePickerResultEvent, Container, Text, alignment, app
+)
+
+PASSWORD = "1234"  # غيّرها إلى كلمة السر التي تريدها
+
 def main(page: Page):
-    page.bgcolor = "black"
+    page.title = "عارض الصور"
+    page.bgcolor = "cyan"
     page.scroll = "auto"
-    page.verical_alignment = "center"
     page.horizontal_alignment = "center"
-    
-    #==========AppBar===================
-    
-    page.appbar = AppBar(
-        bgcolor = "red",
-        title = Text("ZeroTube"),
-        center_title = True,
-        leading = Icon(icons.HOME),
-        leading_width = 40,
-        actions =[
-            IconButton(icons.NOTIFICATIONS),   
-            PopupMenuButton(
-                items =[
-                    PopupMenuItem(text = "Profile"),
-                    PopupMenuItem(text = "Settings"),
-                    PopupMenuItem(text = "About"),
-                    PopupMenuItem(text = "Help"),
-                    PopupMenuItem(),
-                    PopupMenuItem(text = "Exit"),
-                ]
-            )  
-        ]
+    page.vertical_alignment = "center"
+
+    # مربع كلمة السر
+    password_input = TextField(
+        label="Enter Password",
+        password=True,
+        can_reveal_password=True,
+        width=300,
     )
-  #==============AppBar and=============
-    def log(e):
-        v1 = en1.value #Email
-        v2 = en2.value #Password
-        if v1 == "zero" and v2 == "1234":
-            alert1 = AlertDialog(
-                title = Text("Welcome.. Successful entry",size = 20,color="green")
-        )
-            page.overlay.append(alert1)
-            alert1.open = True
+
+    # زر الدخول
+    login_btn = ElevatedButton(text="Login")
+    
+    # عارض الصور
+    images_column = Column(scroll="auto")
+
+    # أداة رفع الملفات (الصور)
+    file_picker = FilePicker()
+
+    def login(e):
+        if password_input.value == PASSWORD:
+            page.clean()
+            page.add(
+                Container(
+                    content=Column(
+                        [
+                            Text("ارفع صورك من هنا:", color="white"),
+                            ElevatedButton(
+                                text="اختر الصور",
+                                icon="upload",
+                                on_click=lambda _: file_picker.pick_files(
+                                    allow_multiple=True,
+                                    file_type="image"
+                                ),
+                            ),
+                            images_column
+                        ]
+                    ),
+                    alignment=alignment.center
+                )
+            )
             page.update()
         else:
-            alert2 = AlertDialog(
-                title = Text("Login Error404 ....",size = 20,color="red")
-    )
-            page.overlay.append(alert2)
-            alert2.open = True
+            password_input.error_text = "كلمة السر غير صحيحة"
             page.update()
-            
-    photo = Image(src="https://cdn-icons-png.flaticon.com/512/8847/8847419.png",width=200)
-    text = Text("Login System ",color='red',size=25)
-    en1 = TextField(label="Email",hint_text="Enter Your Email",color='white',width=300,icon=icons.EMAIL)
-    en2 = TextField(label="Passwd",hint_text="Enter Your Password",color='white',width=300,icon=icons.PASSWORD, password=True,can_reveal_password=True)
-    bt1 = ElevatedButton(text="Login",bgcolor='red',color='white',width=100, height=50,on_click=log)
-    page.add(photo,text,en1,en2,bt1)
-    #==========BottomBar===================
-    page.navigation_bar = NavigationBar(
-        bgcolor = "red",
-        destinations=[
-            NavigationDestination(icon=icons.CALL, label="Call"),
-            NavigationDestination(icon=icons.CONTACT_PHONE, label="Contact"),
-            NavigationDestination(icon=icons.BOOKMARK_BORDER,label="Explore",
-            )
-        ]
-    )
-    
-    page.update()
-app(target=main,assets_dir="assets")
+
+    # عند اختيار الصور
+    def on_files_selected(e: FilePickerResultEvent):
+        if e.files:
+            for f in e.files:
+                images_column.controls.append(
+                    Image(src=f.path, width=300, height=300, fit="contain")
+                )
+            page.update()
+
+    file_picker.on_result = on_files_selected
+    page.overlay.append(file_picker)
+    login_btn.on_click = login
+
+    page.add(password_input, login_btn)
+
+app(target=main)
