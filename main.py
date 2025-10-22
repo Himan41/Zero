@@ -3,7 +3,7 @@ from flet import (
     FilePicker, FilePickerResultEvent, Container, Text, alignment, app
 )
 
-PASSWORD = "1234"  # غيّرها إلى كلمة السر التي تريدها
+PASSWORD = "1234"
 
 def main(page: Page):
     page.title = "عارض الصور"
@@ -12,7 +12,7 @@ def main(page: Page):
     page.horizontal_alignment = "center"
     page.vertical_alignment = "center"
 
-    # مربع كلمة السر
+    
     password_input = TextField(
         label="Enter Password",
         password=True,
